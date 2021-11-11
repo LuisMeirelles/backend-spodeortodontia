@@ -1,8 +1,12 @@
 
 export const up = knex => {
     return knex.schema.createTable('sections', table => {
-        table.integer('id')
-            .unsigned();
+        table.string('id')
+            .notNullable();
+
+        table.integer('index')
+            .unsigned()
+            .notNullable();
 
         table.string('title')
             .notNullable();

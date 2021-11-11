@@ -16,14 +16,19 @@ export default {
 
         const [article, ...rawSections] = post.split('## ');
 
-        const sections = rawSections.map((section, index) => ({
-            id: index,
-            title: section.split('\n\n')[0],
-            content: section.split('\n\n')[1],
-            article_id
-        }));
+        const sections = rawSections.map((section, index) => {
+            const [title, content] = section.split('\n\n');
 
-        console.log(sections);
+            const id = title.toLowerCase().replace(/[^\wáéíóúàêõãâôç]/g, '-');
+
+            return {
+                id,
+                index,
+                title,
+                content,
+                article_id
+            };
+        });
 
         const [rawTitle, description] = article.split('\n\n');
 
@@ -142,7 +147,7 @@ export default {
 
             const sections = await trx('sections')
                 .where({ article_id: id })
-                .orderBy('id')
+                .orderBy('index')
                 .select([
                     'id',
                     'title',
