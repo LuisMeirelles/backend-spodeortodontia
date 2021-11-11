@@ -7,12 +7,13 @@ export const up = knex => {
         table.string('title')
             .notNullable();
 
-        table.text('content').notNullable();
-
-        table.uuid('parent_id')
+        table.text('content')
             .notNullable();
 
-        table.foreign('parent_id')
+        table.uuid('article_id')
+            .notNullable();
+
+        table.foreign('article_id')
             .references('id')
             .inTable('articles');
     });
