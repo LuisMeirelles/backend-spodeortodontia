@@ -23,6 +23,8 @@ export default {
             article_id
         }));
 
+        console.log(sections);
+
         const [rawTitle, description] = article.split('\n\n');
 
         const title = rawTitle.replace('# ', '');
@@ -37,8 +39,10 @@ export default {
                     description
                 });
 
-            await trx('sections')
-                .insert(sections);
+            if (sections[0]) {
+                await trx('sections')
+                    .insert(sections);
+            }
 
             trx.commit();
 
