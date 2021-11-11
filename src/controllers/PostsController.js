@@ -99,13 +99,13 @@ export default {
             const hasNext = currentPage.length > perPage;
             const message = 'Posts listados com sucesso';
 
-            const articles = currentPage.slice(0, perPage);
+            const posts = currentPage.slice(0, perPage);
 
             res.json({
                 message,
                 hasPrevious,
                 hasNext,
-                articles
+                posts
             });
         } catch (error) {
             console.error(error);
