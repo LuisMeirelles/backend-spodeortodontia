@@ -1,8 +1,8 @@
 
 export const up = knex => {
     return knex.schema.createTable('sections', table => {
-        table.increments('id')
-            .primary();
+        table.integer('id')
+            .unsigned();
 
         table.string('title')
             .notNullable();
@@ -16,6 +16,11 @@ export const up = knex => {
         table.foreign('article_id')
             .references('id')
             .inTable('articles');
+
+        table.primary([
+            'id',
+            'article_id'
+        ]);
     });
 };
 

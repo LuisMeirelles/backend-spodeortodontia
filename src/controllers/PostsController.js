@@ -16,13 +16,14 @@ export default {
 
         const [article, ...rawSections] = post.split('## ');
 
-        const sections = rawSections.map(section => ({
+        const sections = rawSections.map((section, index) => ({
+            id: index,
             title: section.split('\n\n')[0],
             content: section.split('\n\n')[1],
             article_id
         }));
 
-        const [rawTitle, description] = article.split('\n');
+        const [rawTitle, description] = article.split('\n\n');
 
         const title = rawTitle.replace('# ', '');
 
