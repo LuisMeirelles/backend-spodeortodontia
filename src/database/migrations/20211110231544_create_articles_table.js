@@ -1,4 +1,3 @@
-
 export const up = knex => {
     return knex.schema.createTable('articles', table => {
         table.uuid('id')
@@ -8,6 +7,14 @@ export const up = knex => {
             .notNullable();
 
         table.text('description')
+            .notNullable();
+
+        table.datetime('created_at')
+            .defaultTo(knex.raw('CURRENT_TIMESTAMP'))
+            .notNullable();
+
+        table.datetime('updated_at')
+            .defaultTo(knex.raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
             .notNullable();
     });
 };

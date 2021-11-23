@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 export default {
     async store(req, res) {
         const { post } = req.body;
+        const { userId } = req;
 
         if (!post) {
             return res.status(400)
@@ -41,7 +42,8 @@ export default {
                 .insert({
                     id: article_id,
                     title,
-                    description
+                    description,
+                    user_id: userId
                 });
 
             if (sections[0]) {
@@ -51,7 +53,10 @@ export default {
 
             trx.commit();
 
-            res.json({ message: 'Post adicionado com sucesso' });
+            res.status(201)
+                .json({
+                    message: 'Post adicionado com sucesso'
+                });
         } catch (error) {
             trx.rollback();
             console.error(error);
@@ -75,7 +80,7 @@ export default {
         if (currentPage <= 0) {
             return res.status(400)
                 .json({
-                    message: 'A página atual deve ser maior que zero'
+                    message: 'A página atual deve ser maior que zero.'
                 });
         }
 
@@ -84,37 +89,26 @@ export default {
         if (perPage <= 0) {
             return res.status(400)
                 .json({
-                    message: 'O limite de posts por página deve ser maior que zero'
+                    message: 'O limite de posts por página deve ser maior que zero.'
                 });
         }
 
         const offset = (currentPage - 1) * perPage;
 
         try {
-            const currentPage = await database('articles')
+            const posts = await database('articles')
                 .offset(offset)
-                .limit(perPage + 1);
+                .limit(perPage);
 
-            let hasPrevious = offset > 0;
-
-            if (offset > 0) {
-                const prevPage = await database('articles')
-                    .select('id')
-                    .offset(offset - perPage)
-                    .limit(1);
-
-                hasPrevious = prevPage.length === 1;
+            if (!posts[0]) {
+                return res.status(404)
+                    .json({
+                        message: 'A página requisitada não existe.'
+                    });
             }
 
-            const hasNext = currentPage.length > perPage;
-            const message = 'Posts listados com sucesso';
-
-            const posts = currentPage.slice(0, perPage);
-
             res.json({
-                message,
-                hasPrevious,
-                hasNext,
+                message: 'Posts listados com sucesso.',
                 posts
             });
         } catch (error) {
@@ -122,7 +116,7 @@ export default {
 
             res.status(500)
                 .json({
-                    message: 'Ocorreu um erro ao listar posts',
+                    message: 'Ocorreu um erro ao listar posts.',
                     error
                 });
         }
@@ -157,7 +151,7 @@ export default {
 
             await trx.commit();
 
-            res.status(201)
+            res.status(200)
                 .json({
                     message: 'Post encontrado',
                     post: {
